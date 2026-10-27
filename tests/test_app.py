@@ -413,3 +413,158 @@ def test_rejeitar_doacao_para_produto_inativo(client, app):
 
         assert doacoes == 0
         assert movimentacoes == 0
+
+
+def test_rejeitar_doacao_com_quantidade_negativa(client, app):
+    with app.app_context():
+        produto = Produto(nome="Arroz", unidade_medida="kg", ativo=True)
+        db.session.add(produto)
+        db.session.commit()
+        produto_id = produto.id
+
+    resposta = client.post(
+        "/doacoes/nova",
+        data={
+            "produto_id": str(produto_id),
+            "quantidade": "-2",
+            "data_doacao": date.today().isoformat(),
+            "observacao": "",
+        },
+        follow_redirects=True,
+    )
+
+    assert resposta.status_code == 200
+    assert "quantidade" in resposta.data.decode("utf-8").lower()
+
+    with app.app_context():
+        assert Doacao.query.count() == 0
+        assert MovimentacaoEstoque.query.count() == 0
+
+
+def test_rejeitar_doacao_com_data_invalida(client, app):
+    with app.app_context():
+        produto = Produto(nome="Feijão", unidade_medida="kg", ativo=True)
+        db.session.add(produto)
+        db.session.commit()
+        produto_id = produto.id
+
+    resposta = client.post(
+        "/doacoes/nova",
+        data={
+            "produto_id": str(produto_id),
+            "quantidade": "5",
+            "data_doacao": "data-invalida",
+            "observacao": "",
+        },
+        follow_redirects=True,
+    )
+
+    assert resposta.status_code == 200
+    assert "data válida" in resposta.data.decode("utf-8").lower()
+
+    with app.app_context():
+        assert Doacao.query.count() == 0
+        assert MovimentacaoEstoque.query.count() == 0
+
+
+def test_rejeitar_distribuicao_com_mais_de_duas_casas_decimais(
+    client, app
+):
+    with app.app_context():
+        produto = Produto(nome="Arroz", unidade_medida="kg", ativo=True)
+        familia = FamiliaAtendida(codigo="FAM-006", ativo=True)
+        db.session.add_all([produto, familia])
+        db.session.commit()
+
+        produto_id = produto.id
+        familia_id = familia.id
+
+        db.session.add(
+            MovimentacaoEstoque(
+                produto_id=produto_id,
+                tipo="entrada",
+                quantidade=Decimal("10"),
+                data_movimentacao=date.today(),
+            )
+        )
+        db.session.commit()
+
+    resposta = client.post(
+        "/distribuicoes/nova",
+        data={
+            "produto_id": str(produto_id),
+            "familia_id": str(familia_id),
+            "quantidade": "1.234",
+            "data_movimentacao": date.today().isoformat(),
+            "observacao": "",
+        },
+        follow_redirects=True,
+    )
+
+    assert resposta.status_code == 200
+    assert "quantidade válida" in resposta.data.decode("utf-8").lower()
+
+    with app.app_context():
+        saidas = MovimentacaoEstoque.query.filter_by(
+            produto_id=produto_id,
+            tipo="saida",
+        ).count()
+        assert saidas == 0
+
+
+def test_distribuir_exatamente_o_saldo_disponivel(client, app):
+    with app.app_context():
+        produto = Produto(nome="Açúcar", unidade_medida="kg", ativo=True)
+        familia = FamiliaAtendida(codigo="FAM-007", ativo=True)
+        db.session.add_all([produto, familia])
+        db.session.commit()
+
+        produto_id = produto.id
+        familia_id = familia.id
+
+        db.session.add(
+            MovimentacaoEstoque(
+                produto_id=produto_id,
+                tipo="entrada",
+                quantidade=Decimal("5"),
+                data_movimentacao=date.today(),
+            )
+        )
+        db.session.commit()
+
+    resposta = client.post(
+        "/distribuicoes/nova",
+        data={
+            "produto_id": str(produto_id),
+            "familia_id": str(familia_id),
+            "quantidade": "5",
+            "data_movimentacao": date.today().isoformat(),
+            "observacao": "",
+        },
+        follow_redirects=True,
+    )
+
+    assert resposta.status_code == 200
+    assert "açúcar" in resposta.data.decode("utf-8").lower()
+
+    with app.app_context():
+        saida = MovimentacaoEstoque.query.filter_by(
+            produto_id=produto_id,
+            tipo="saida",
+        ).one()
+        assert saida.quantidade == Decimal("5")
+
+        saldo = (
+            db.session.query(
+                db.func.sum(
+                    db.case(
+                        (MovimentacaoEstoque.tipo == "entrada",
+                         MovimentacaoEstoque.quantidade),
+                        else_=0,
+                    )
+                )
+            ).filter(
+                MovimentacaoEstoque.produto_id == produto_id
+            ).scalar()
+        )
+        assert Decimal(str(saldo)) == Decimal("5")
