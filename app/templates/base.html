@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>{% block title %}Solidário+{% endblock %}</title>
+
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-content">
+        <a href="{{ url_for('main.index') }}" class="logo">
+          Solidário<span>+</span>
+        </a>
+
+        <p class="header-description">
+          Sistema de Gestão de Doações e Distribuição
+        </p>
+      </div>
+    </header>
+
+    <nav class="main-nav" aria-label="Navegação principal">
+      <div class="nav-content">
+        <a href="{{ url_for('main.index') }}">Início</a>
+        <a href="{{ url_for('products.listar') }}">Produtos</a>
+        <a href="{{ url_for('donations.listar') }}">Doações</a>
+        <a href="{{ url_for('stock.listar') }}">Estoque</a>
+        <a href="{{ url_for('families.listar') }}">Famílias</a>
+        <a href="{{ url_for('distributions.listar') }}">Distribuições</a>
+      </div>
+    </nav>
+
+    <main class="page-content">{% block content %}{% endblock %}</main>
+
+    <footer class="site-footer">
+      <p>Solidário+ — Gestão de Doações e Distribuição</p>
+    </footer>
+  </body>
+</html>

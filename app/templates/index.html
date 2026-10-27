@@ -1,19 +1,85 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>Solidário+ | Gestão de Doações</title>
-</head>
-<body>
+
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+  </head>
+  <body>
     <header>
-        <h1>Solidário+</h1>
-        <p>Sistema de Gestão de Doações e Distribuição</p>
+      <div class="header-content">
+        <h1 class="logo">Solidário+</h1>
+        <p class="header-description">
+          Sistema de Gestão de Doações e Distribuição
+        </p>
+      </div>
     </header>
 
     <main>
-        <h2>Bem-vindo ao Solidário+</h2>
-        <p>Organizando doações, estoque e distribuição em um só lugar.</p>
+      <section class="welcome">
+        <span class="welcome-label">GESTÃO SOLIDÁRIA</span>
+
+        <h1>Bem-vindo ao Solidário+</h1>
+
+        <p>
+          Organize doações, acompanhe o estoque e gerencie a distribuição de
+          produtos em um só lugar.
+        </p>
+      </section>
+
+      <section class="dashboard">
+        <h2>Área de gestão</h2>
+
+        <p class="section-description">
+          Escolha uma área para consultar os registros ou realizar novas
+          operações.
+        </p>
+
+        <div class="dashboard-grid">
+          <a class="card" href="{{ url_for('products.listar') }}">
+            <span class="card-icon">📦</span>
+            <h3>Produtos</h3>
+            <p>
+              Consulte os produtos cadastrados e gerencie sua disponibilidade.
+            </p>
+            <span class="card-link">Acessar produtos →</span>
+          </a>
+
+          <a class="card" href="{{ url_for('donations.listar') }}">
+            <span class="card-icon">💙</span>
+            <h3>Doações</h3>
+            <p>Consulte as doações recebidas e registre novas entradas.</p>
+            <span class="card-link">Acessar doações →</span>
+          </a>
+
+          <a class="card" href="{{ url_for('stock.listar') }}">
+            <span class="card-icon">📊</span>
+            <h3>Estoque</h3>
+            <p>Acompanhe as movimentações e a disponibilidade dos produtos.</p>
+            <span class="card-link">Consultar estoque →</span>
+          </a>
+
+          <a class="card" href="{{ url_for('families.listar') }}">
+            <span class="card-icon">👥</span>
+            <h3>Famílias atendidas</h3>
+            <p>Consulte os cadastros das famílias atendidas pela associação.</p>
+            <span class="card-link">Acessar famílias →</span>
+          </a>
+
+          <a class="card" href="{{ url_for('distributions.listar') }}">
+            <span class="card-icon">🤝</span>
+            <h3>Distribuições</h3>
+            <p>Consulte e registre distribuições de produtos às famílias.</p>
+            <span class="card-link">Acessar distribuições →</span>
+          </a>
+        </div>
+      </section>
     </main>
-</body>
+  </body>
 </html>
