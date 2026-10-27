@@ -19,6 +19,7 @@
       <p>
         <a href="{{ url_for('products.novo') }}">Cadastrar produto</a>
       </p>
+
       {% if produtos %}
       <table>
         <thead>
@@ -26,6 +27,7 @@
             <th>Nome</th>
             <th>Unidade de medida</th>
             <th>Situação</th>
+            <th>Ações</th>
           </tr>
         </thead>
         <tbody>
@@ -34,6 +36,18 @@
             <td>{{ produto.nome }}</td>
             <td>{{ produto.unidade_medida }}</td>
             <td>{{ "Ativo" if produto.ativo else "Inativo" }}</td>
+            <td>
+              {% if produto.ativo %}
+              <form
+                method="post"
+                action="{{ url_for('products.inativar', produto_id=produto.id) }}"
+              >
+                <button type="submit">Inativar</button>
+              </form>
+              {% else %}
+              <span>Produto inativo</span>
+              {% endif %}
+            </td>
           </tr>
           {% endfor %}
         </tbody>

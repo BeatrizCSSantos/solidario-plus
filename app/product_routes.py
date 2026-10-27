@@ -51,3 +51,22 @@ def novo():
         return redirect(url_for("products.listar"))
 
     return render_template("produtos/novo.html")
+
+
+@products.route("/<int:produto_id>/inativar", methods=["POST"])
+def inativar(produto_id):
+    produto = db.session.get(Produto, produto_id)
+
+    if produto is None:
+        flash("Produto não encontrado.", "erro")
+        return redirect(url_for("products.listar"))
+
+    if not produto.ativo:
+        flash("Este produto já está inativo.", "erro")
+        return redirect(url_for("products.listar"))
+
+    produto.ativo = False
+    db.session.commit()
+
+    flash("Produto inativado com sucesso.", "sucesso")
+    return redirect(url_for("products.listar"))
