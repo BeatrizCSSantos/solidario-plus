@@ -1,66 +1,85 @@
-<!doctype html>
-<html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Produtos | Solidário+</title>
-  </head>
-  <body>
-    <header>
-      <h1>Solidário+</h1>
-      <nav>
-        <a href="/">Início</a>
-        <a href="/produtos/">Produtos</a>
-      </nav>
-    </header>
+{% extends "base.html" %} {% block title %}Produtos | Solidário+{% endblock %}
+{% block content %}
+<section class="page-heading">
+  <div>
+    <p class="eyebrow">CADASTRO E ORGANIZAÇÃO</p>
+    <h1>Produtos</h1>
+    <p class="page-description">
+      Gerencie os produtos recebidos e utilizados pela associação.
+    </p>
+  </div>
 
-    <main>
+  <a class="button button-primary" href="{{ url_for('products.novo') }}">
+    <span aria-hidden="true">+</span> Cadastrar produto
+  </a>
+</section>
+
+{% with mensagens = get_flashed_messages(with_categories=true) %} {% for
+categoria, mensagem in mensagens %}
+<div class="alert alert-{{ categoria }}" role="alert">{{ mensagem }}</div>
+{% endfor %} {% endwith %}
+
+<section class="content-card">
+  <div class="section-heading">
+    <div>
       <h2>Produtos cadastrados</h2>
+      <p>Consulte os produtos e sua situação atual.</p>
+    </div>
+    <span class="item-count"> {{ produtos|length }} produto(s) </span>
+  </div>
 
-      {% with mensagens = get_flashed_messages(with_categories=true) %} {% for
-      categoria, mensagem in mensagens %}
-      <p role="alert" class="{{ categoria }}">{{ mensagem }}</p>
-      {% endfor %} {% endwith %}
-
-      <p>
-        <a href="{{ url_for('products.novo') }}">Cadastrar produto</a>
-      </p>
-
-      {% if produtos %}
-      <table>
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>Unidade de medida</th>
-            <th>Situação</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for produto in produtos %}
-          <tr>
-            <td>{{ produto.nome }}</td>
-            <td>{{ produto.unidade_medida }}</td>
-            <td>{{ "Ativo" if produto.ativo else "Inativo" }}</td>
-            <td>
-              {% if produto.ativo %}
-              <form
-                method="post"
-                action="{{ url_for('products.inativar', produto_id=produto.id) }}"
-              >
-                <button type="submit">Inativar</button>
-              </form>
-              {% else %}
-              <span>Produto inativo</span>
-              {% endif %}
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-      {% else %}
-      <p>Nenhum produto cadastrado ainda.</p>
-      {% endif %}
-    </main>
-  </body>
-</html>
+  {% if produtos %}
+  <div class="table-wrapper">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Nome do produto</th>
+          <th>Unidade de medida</th>
+          <th>Situação</th>
+          <th class="actions-column">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for produto in produtos %}
+        <tr>
+          <td class="product-name">{{ produto.nome }}</td>
+          <td>{{ produto.unidade_medida }}</td>
+          <td>
+            {% if produto.ativo %}
+            <span class="status-badge status-active">Ativo</span>
+            {% else %}
+            <span class="status-badge status-inactive">Inativo</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if produto.ativo %}
+            <form
+              method="post"
+              action="{{ url_for('products.inativar', produto_id=produto.id) }}"
+              class="inline-form"
+            >
+              <button class="button button-danger-outline" type="submit">
+                Inativar
+              </button>
+            </form>
+            {% else %}
+            <span class="muted-text">Sem ações disponíveis</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-state-icon" aria-hidden="true">📦</div>
+    <h3>Nenhum produto cadastrado</h3>
+    <p>Cadastre o primeiro produto para começar a organizar o estoque.</p>
+    <a class="button button-primary" href="{{ url_for('products.novo') }}">
+      Cadastrar primeiro produto
+    </a>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

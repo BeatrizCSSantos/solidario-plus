@@ -1,85 +1,98 @@
-<!doctype html>
-<html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+{% extends "base.html" %} {% block title %}Início | Solidário+{% endblock %} {%
+block content %}
+<section class="welcome">
+  <span class="welcome-label">GESTÃO SOLIDÁRIA</span>
+  <h1>Bem-vindo ao Solidário+</h1>
+  <p>
+    Organize doações, acompanhe o estoque e gerencie a distribuição de produtos
+    em um só lugar.
+  </p>
+</section>
 
-    <title>Solidário+ | Gestão de Doações</title>
+<section class="dashboard-summary">
+  <div class="section-heading">
+    <div>
+      <h2>Visão geral</h2>
+      <p>Acompanhe os principais registros da associação.</p>
+    </div>
+  </div>
 
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/style.css') }}"
-    />
-  </head>
-  <body>
-    <header>
-      <div class="header-content">
-        <h1 class="logo">Solidário+</h1>
-        <p class="header-description">
-          Sistema de Gestão de Doações e Distribuição
-        </p>
-      </div>
-    </header>
+  <div class="stats-grid">
+    <article class="stat-card">
+      <span class="stat-icon" aria-hidden="true">📦</span>
+      <p class="stat-label">Produtos ativos</p>
+      <p class="stat-value">{{ total_produtos }}</p>
+      <a href="{{ url_for('products.listar') }}">Consultar produtos →</a>
+    </article>
 
-    <main>
-      <section class="welcome">
-        <span class="welcome-label">GESTÃO SOLIDÁRIA</span>
+    <article class="stat-card">
+      <span class="stat-icon" aria-hidden="true">💙</span>
+      <p class="stat-label">Doações registradas</p>
+      <p class="stat-value">{{ total_doacoes }}</p>
+      <a href="{{ url_for('donations.listar') }}">Consultar doações →</a>
+    </article>
 
-        <h1>Bem-vindo ao Solidário+</h1>
+    <article class="stat-card">
+      <span class="stat-icon" aria-hidden="true">🤝</span>
+      <p class="stat-label">Distribuições registradas</p>
+      <p class="stat-value">{{ total_distribuicoes }}</p>
+      <a href="{{ url_for('distributions.listar') }}"
+        >Consultar distribuições →</a
+      >
+    </article>
 
-        <p>
-          Organize doações, acompanhe o estoque e gerencie a distribuição de
-          produtos em um só lugar.
-        </p>
-      </section>
+    <article class="stat-card">
+      <span class="stat-icon" aria-hidden="true">👥</span>
+      <p class="stat-label">Famílias ativas</p>
+      <p class="stat-value">{{ total_familias }}</p>
+      <a href="{{ url_for('families.listar') }}">Consultar famílias →</a>
+    </article>
+  </div>
+</section>
 
-      <section class="dashboard">
-        <h2>Área de gestão</h2>
+<section class="dashboard">
+  <div class="section-heading">
+    <div>
+      <h2>Área de gestão</h2>
+      <p>Escolha um módulo para consultar registros ou realizar operações.</p>
+    </div>
+  </div>
 
-        <p class="section-description">
-          Escolha uma área para consultar os registros ou realizar novas
-          operações.
-        </p>
+  <div class="dashboard-grid">
+    <a class="card" href="{{ url_for('products.listar') }}">
+      <span class="card-icon" aria-hidden="true">📦</span>
+      <h3>Produtos</h3>
+      <p>Consulte os produtos cadastrados e gerencie sua disponibilidade.</p>
+      <span class="card-link">Acessar produtos →</span>
+    </a>
 
-        <div class="dashboard-grid">
-          <a class="card" href="{{ url_for('products.listar') }}">
-            <span class="card-icon">📦</span>
-            <h3>Produtos</h3>
-            <p>
-              Consulte os produtos cadastrados e gerencie sua disponibilidade.
-            </p>
-            <span class="card-link">Acessar produtos →</span>
-          </a>
+    <a class="card" href="{{ url_for('donations.listar') }}">
+      <span class="card-icon" aria-hidden="true">💙</span>
+      <h3>Doações</h3>
+      <p>Consulte as doações recebidas e registre novas entradas.</p>
+      <span class="card-link">Acessar doações →</span>
+    </a>
 
-          <a class="card" href="{{ url_for('donations.listar') }}">
-            <span class="card-icon">💙</span>
-            <h3>Doações</h3>
-            <p>Consulte as doações recebidas e registre novas entradas.</p>
-            <span class="card-link">Acessar doações →</span>
-          </a>
+    <a class="card" href="{{ url_for('stock.listar') }}">
+      <span class="card-icon" aria-hidden="true">📊</span>
+      <h3>Estoque</h3>
+      <p>Acompanhe as entradas, saídas e os saldos disponíveis.</p>
+      <span class="card-link">Consultar estoque →</span>
+    </a>
 
-          <a class="card" href="{{ url_for('stock.listar') }}">
-            <span class="card-icon">📊</span>
-            <h3>Estoque</h3>
-            <p>Acompanhe as movimentações e a disponibilidade dos produtos.</p>
-            <span class="card-link">Consultar estoque →</span>
-          </a>
+    <a class="card" href="{{ url_for('families.listar') }}">
+      <span class="card-icon" aria-hidden="true">👥</span>
+      <h3>Famílias atendidas</h3>
+      <p>Consulte os cadastros e a situação das famílias.</p>
+      <span class="card-link">Acessar famílias →</span>
+    </a>
 
-          <a class="card" href="{{ url_for('families.listar') }}">
-            <span class="card-icon">👥</span>
-            <h3>Famílias atendidas</h3>
-            <p>Consulte os cadastros das famílias atendidas pela associação.</p>
-            <span class="card-link">Acessar famílias →</span>
-          </a>
-
-          <a class="card" href="{{ url_for('distributions.listar') }}">
-            <span class="card-icon">🤝</span>
-            <h3>Distribuições</h3>
-            <p>Consulte e registre distribuições de produtos às famílias.</p>
-            <span class="card-link">Acessar distribuições →</span>
-          </a>
-        </div>
-      </section>
-    </main>
-  </body>
-</html>
+    <a class="card" href="{{ url_for('distributions.listar') }}">
+      <span class="card-icon" aria-hidden="true">🤝</span>
+      <h3>Distribuições</h3>
+      <p>Consulte o histórico e registre entregas às famílias.</p>
+      <span class="card-link">Acessar distribuições →</span>
+    </a>
+  </div>
+</section>
+{% endblock %}

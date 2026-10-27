@@ -1,52 +1,72 @@
-<!doctype html>
-<html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Estoque | Solidário+</title>
-  </head>
-  <body>
-    <header>
-      <h1>Solidário+</h1>
-      <nav>
-        <a href="/">Início</a>
-        <a href="{{ url_for('products.listar') }}">Produtos</a>
-        <a href="{{ url_for('donations.listar') }}">Doações</a>
-        <a href="{{ url_for('stock.listar') }}">Estoque</a>
-      </nav>
-    </header>
+{% extends "base.html" %} {% block title %}Estoque | Solidário+{% endblock %} {%
+block content %}
+<section class="page-heading">
+  <div>
+    <p class="eyebrow">CONTROLE DE INVENTÁRIO</p>
+    <h1>Estoque</h1>
+    <p class="page-description">
+      Acompanhe as entradas, saídas e os saldos disponíveis dos produtos.
+    </p>
+  </div>
+</section>
 
-    <main>
-      <h2>Consulta de estoque</h2>
+<section class="content-card">
+  <div class="section-heading">
+    <div>
+      <h2>Posição do estoque</h2>
+      <p>Consulte as quantidades registradas para cada produto.</p>
+    </div>
 
-      {% if produtos %}
-      <table>
-        <thead>
-          <tr>
-            <th>Produto</th>
-            <th>Unidade</th>
-            <th>Entradas</th>
-            <th>Saídas</th>
-            <th>Saldo disponível</th>
-            <th>Situação</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for produto, entradas, saidas, saldo in produtos %}
-          <tr>
-            <td>{{ produto.nome }}</td>
-            <td>{{ produto.unidade_medida }}</td>
-            <td>{{ entradas }}</td>
-            <td>{{ saidas }}</td>
-            <td>{{ saldo }}</td>
-            <td>{{ "Ativo" if produto.ativo else "Inativo" }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-      {% else %}
-      <p>Nenhum produto cadastrado.</p>
-      {% endif %}
-    </main>
-  </body>
-</html>
+    <span class="item-count"> {{ produtos|length }} produto(s) </span>
+  </div>
+
+  {% if produtos %}
+  <div class="table-wrapper">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Produto</th>
+          <th>Unidade</th>
+          <th>Entradas</th>
+          <th>Saídas</th>
+          <th>Saldo disponível</th>
+          <th>Situação</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for produto, entradas, saidas, saldo in produtos %}
+        <tr>
+          <td class="product-name">{{ produto.nome }}</td>
+          <td>{{ produto.unidade_medida }}</td>
+          <td>{{ entradas }}</td>
+          <td>{{ saidas }}</td>
+          <td>
+            <strong>{{ saldo }}</strong>
+          </td>
+          <td>
+            {% if produto.ativo %}
+            <span class="status-badge status-active">Ativo</span>
+            {% else %}
+            <span class="status-badge status-inactive">Inativo</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-state-icon" aria-hidden="true">📦</div>
+    <h3>Nenhum produto cadastrado</h3>
+    <p>
+      Cadastre produtos para começar a acompanhar as entradas, saídas e os
+      saldos do estoque.
+    </p>
+    <a class="button button-primary" href="{{ url_for('products.novo') }}">
+      Cadastrar produto
+    </a>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

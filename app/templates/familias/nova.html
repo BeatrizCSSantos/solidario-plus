@@ -1,42 +1,50 @@
-<!doctype html>
-<html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Nova família | Solidário+</title>
-  </head>
-  <body>
-    <header>
-      <h1>Solidário+</h1>
-      <nav>
-        <a href="/">Início</a>
-        <a href="{{ url_for('families.listar') }}">Famílias</a>
-        <a href="{{ url_for('distributions.listar') }}">Distribuições</a>
-      </nav>
-    </header>
+{% extends "base.html" %} {% block title %}Cadastrar família | Solidário+{%
+endblock %} {% block content %}
+<section class="page-heading">
+  <div>
+    <p class="eyebrow">PESSOAS ATENDIDAS</p>
+    <h1>Cadastrar família</h1>
+    <p class="page-description">
+      Informe um código para identificar a família no sistema.
+    </p>
+  </div>
+</section>
 
-    <main>
-      <h2>Cadastrar família atendida</h2>
+{% with mensagens = get_flashed_messages(with_categories=true) %} {% for
+categoria, mensagem in mensagens %}
+<div class="alert alert-{{ categoria }}" role="alert">{{ mensagem }}</div>
+{% endfor %} {% endwith %}
 
-      {% with mensagens = get_flashed_messages(with_categories=true) %} {% for
-      categoria, mensagem in mensagens %}
-      <p role="alert">{{ mensagem }}</p>
-      {% endfor %} {% endwith %}
+<section class="form-card">
+  <form method="post" class="form-layout">
+    <div class="form-field">
+      <label for="codigo">Código da família</label>
+      <input
+        id="codigo"
+        name="codigo"
+        type="text"
+        maxlength="20"
+        value="{{ request.form.get('codigo', '') }}"
+        placeholder="Ex.: FAM-001"
+        autocomplete="off"
+        required
+      />
+      <p class="field-hint">
+        Utilize um código único e fácil de identificar para o cadastro.
+      </p>
+    </div>
 
-      <form method="post">
-        <label for="codigo">Código da família</label>
-        <input
-          id="codigo"
-          name="codigo"
-          type="text"
-          maxlength="20"
-          value="{{ request.form.get('codigo', '') }}"
-          placeholder="Ex.: FAM-001"
-          required
-        />
-
-        <button type="submit">Cadastrar família</button>
-      </form>
-    </main>
-  </body>
-</html>
+    <div class="form-actions">
+      <button class="button button-primary" type="submit">
+        Cadastrar família
+      </button>
+      <a
+        class="button button-secondary"
+        href="{{ url_for('families.listar') }}"
+      >
+        Cancelar
+      </a>
+    </div>
+  </form>
+</section>
+{% endblock %}

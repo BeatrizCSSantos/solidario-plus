@@ -1,61 +1,83 @@
+{% extends "base.html" %}
 
-<!doctype html>
-<html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Nova distribuição | Solidário+</title>
-  </head>
-  <body>
-    <header>
-      <h1>Solidário+</h1>
-      <nav>
-        <a href="/">Início</a>
-        <a href="{{ url_for('products.listar') }}">Produtos</a>
-        <a href="{{ url_for('stock.listar') }}">Estoque</a>
-        <a href="{{ url_for('distributions.listar') }}">Distribuições</a>
-      </nav>
-    </header>
+{% block title %}Registrar distribuição | Solidário+{% endblock %}
 
-    <main>
-      <h2>Registrar distribuição</h2>
+{% block content %}
+<section class="page-heading">
+  <div>
+    <p class="eyebrow">ENTREGA ÀS FAMÍLIAS</p>
+    <h1>Registrar distribuição</h1>
+    <p class="page-description">
+      Registre o produto entregue, a família atendida e a quantidade distribuída.
+    </p>
+  </div>
+</section>
 
-      {% with mensagens = get_flashed_messages(with_categories=true) %}
-        {% for categoria, mensagem in mensagens %}
-          <p role="alert">{{ mensagem }}</p>
-        {% endfor %}
-      {% endwith %}
+{% with mensagens = get_flashed_messages(with_categories=true) %}
+  {% for categoria, mensagem in mensagens %}
+    <div class="alert alert-{{ categoria }}" role="alert">
+      {{ mensagem }}
+    </div>
+  {% endfor %}
+{% endwith %}
 
-      {% if produtos and familias %}
-      <form method="post">
+<section class="form-card">
+  {% if produtos and familias %}
+    <form method="post" class="form-layout">
+      <div class="form-field">
         <label for="familia_id">Família atendida</label>
         <select id="familia_id" name="familia_id" required>
           <option value="">Selecione uma família</option>
           {% for familia in familias %}
-          <option value="{{ familia.id }}">{{ familia.codigo }}</option>
+            <option
+              value="{{ familia.id }}"
+              {% if request.form.get('familia_id', '') == familia.id|string %}selected{% endif %}
+            >
+              {{ familia.codigo }}
+            </option>
           {% endfor %}
         </select>
+        <p class="field-hint">
+          Selecione a família que recebeu os produtos.
+        </p>
+      </div>
 
+      <div class="form-field">
         <label for="produto_id">Produto</label>
         <select id="produto_id" name="produto_id" required>
           <option value="">Selecione um produto</option>
           {% for produto in produtos %}
-          <option value="{{ produto.id }}">
-            {{ produto.nome }} ({{ produto.unidade_medida }})
-          </option>
+            <option
+              value="{{ produto.id }}"
+              {% if request.form.get('produto_id', '') == produto.id|string %}selected{% endif %}
+            >
+              {{ produto.nome }} ({{ produto.unidade_medida }})
+            </option>
           {% endfor %}
         </select>
+        <p class="field-hint">
+          Selecione o produto que será retirado do estoque.
+        </p>
+      </div>
 
-        <label for="quantidade">Quantidade</label>
+      <div class="form-field">
+        <label for="quantidade">Quantidade distribuída</label>
         <input
           id="quantidade"
           name="quantidade"
           type="number"
           min="0.01"
           step="0.01"
+          value="{{ request.form.get('quantidade', '') }}"
+          placeholder="Ex.: 2"
           required
         />
+        <p class="field-hint">
+          A quantidade deve respeitar a disponibilidade do estoque.
+        </p>
+      </div>
 
+      <div class="form-field">
         <label for="data_movimentacao">Data da distribuição</label>
         <input
           id="data_movimentacao"
@@ -64,22 +86,46 @@
           value="{{ request.form.get('data_movimentacao', '') }}"
           required
         />
+      </div>
 
-        <label for="observacao">Observação (opcional)</label>
+      <div class="form-field">
+        <label for="observacao">
+          Observação <span class="muted-text">(opcional)</span>
+        </label>
         <textarea
           id="observacao"
           name="observacao"
           maxlength="250"
-        ></textarea>
+          rows="4"
+          placeholder="Adicione informações relevantes sobre a entrega."
+        >{{ request.form.get('observacao', '') }}</textarea>
+        <p class="field-hint">Máximo de 250 caracteres.</p>
+      </div>
 
-        <button type="submit">Registrar distribuição</button>
-      </form>
-      {% else %}
+      <div class="form-actions">
+        <button class="button button-primary" type="submit">
+          Registrar distribuição
+        </button>
+        <a class="button button-secondary" href="{{ url_for('distributions.listar') }}">
+          Cancelar
+        </a>
+      </div>
+    </form>
+  {% else %}
+    <div class="empty-state">
+      <div class="empty-state-icon" aria-hidden="true">📋</div>
+      <h3>Cadastros necessários</h3>
       <p>
-        Para registrar uma distribuição, é necessário ter pelo menos
-        um produto ativo e uma família ativa cadastrada.
+        Para registrar uma distribuição, é necessário ter pelo menos um produto
+        ativo e uma família ativa cadastrada.
       </p>
-      {% endif %}
-    </main>
-  </body>
-</html>
+      <a class="button button-primary" href="{{ url_for('products.novo') }}">
+        Cadastrar produto
+      </a>
+      <a class="button button-secondary" href="{{ url_for('families.nova') }}">
+        Cadastrar família
+      </a>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

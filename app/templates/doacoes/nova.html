@@ -1,50 +1,65 @@
+{% extends "base.html" %}
 
-<!doctype html>
-<html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Nova doação | Solidário+</title>
-  </head>
-  <body>
-    <header>
-      <h1>Solidário+</h1>
-      <nav>
-        <a href="/">Início</a>
-        <a href="{{ url_for('products.listar') }}">Produtos</a>
-        <a href="{{ url_for('donations.listar') }}">Doações</a>
-      </nav>
-    </header>
+{% block title %}Registrar doação | Solidário+{% endblock %}
 
-    <main>
-      <h2>Registrar doação</h2>
+{% block content %}
+<section class="page-heading">
+  <div>
+    <p class="eyebrow">ENTRADAS DE ESTOQUE</p>
+    <h1>Registrar doação</h1>
+    <p class="page-description">
+      Informe o produto recebido, a quantidade e a data da doação.
+    </p>
+  </div>
+</section>
 
-      {% with mensagens = get_flashed_messages(with_categories=true) %}
-        {% for categoria, mensagem in mensagens %}
-          <p role="alert">{{ mensagem }}</p>
-        {% endfor %}
-      {% endwith %}
+{% with mensagens = get_flashed_messages(with_categories=true) %}
+  {% for categoria, mensagem in mensagens %}
+    <div class="alert alert-{{ categoria }}" role="alert">
+      {{ mensagem }}
+    </div>
+  {% endfor %}
+{% endwith %}
 
-      {% if produtos %}
-      <form method="post">
+<section class="form-card">
+  {% if produtos %}
+    <form method="post" class="form-layout">
+      <div class="form-field">
         <label for="produto_id">Produto</label>
         <select id="produto_id" name="produto_id" required>
           <option value="">Selecione um produto</option>
           {% for produto in produtos %}
-          <option value="{{ produto.id }}">{{ produto.nome }} ({{ produto.unidade_medida }})</option>
+            <option
+              value="{{ produto.id }}"
+              {% if request.form.get('produto_id', '') == produto.id|string %}selected{% endif %}
+            >
+              {{ produto.nome }} ({{ produto.unidade_medida }})
+            </option>
           {% endfor %}
         </select>
+        <p class="field-hint">
+          Selecione o produto que a associação recebeu.
+        </p>
+      </div>
 
-        <label for="quantidade">Quantidade</label>
+      <div class="form-field">
+        <label for="quantidade">Quantidade recebida</label>
         <input
           id="quantidade"
           name="quantidade"
           type="number"
           min="0.01"
           step="0.01"
+          value="{{ request.form.get('quantidade', '') }}"
+          placeholder="Ex.: 10"
           required
         />
+        <p class="field-hint">
+          Informe a quantidade utilizando a unidade de medida do produto.
+        </p>
+      </div>
 
+      <div class="form-field">
         <label for="data_doacao">Data da doação</label>
         <input
           id="data_doacao"
@@ -53,15 +68,43 @@
           value="{{ request.form.get('data_doacao', '') }}"
           required
         />
+      </div>
 
-        <label for="observacao">Observação (opcional)</label>
-        <textarea id="observacao" name="observacao" maxlength="250"></textarea>
+      <div class="form-field">
+        <label for="observacao">Observação <span class="muted-text">(opcional)</span></label>
+        <textarea
+          id="observacao"
+          name="observacao"
+          maxlength="250"
+          rows="4"
+          placeholder="Adicione detalhes relevantes sobre a doação."
+        >{{ request.form.get('observacao', '') }}</textarea>
+        <p class="field-hint">Máximo de 250 caracteres.</p>
+      </div>
 
-        <button type="submit">Registrar doação</button>
-      </form>
-      {% else %}
-      <p>Cadastre pelo menos um produto ativo antes de registrar uma doação.</p>
-      {% endif %}
-    </main>
-  </body>
-</html>
+      <div class="form-actions">
+        <button class="button button-primary" type="submit">
+          Registrar doação
+        </button>
+        <a class="button button-secondary" href="{{ url_for('donations.listar') }}">
+          Cancelar
+        </a>
+      </div>
+    </form>
+  {% else %}
+    <div class="empty-state">
+      <div class="empty-state-icon" aria-hidden="true">📋</div>
+      <h3>Nenhum produto disponível</h3>
+      <p>
+        Cadastre um produto ativo antes de registrar uma doação.
+      </p>
+      <a class="button button-primary" href="{{ url_for('products.novo') }}">
+        Cadastrar produto
+      </a>
+      <a class="button button-secondary" href="{{ url_for('donations.listar') }}">
+        Voltar para doações
+      </a>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

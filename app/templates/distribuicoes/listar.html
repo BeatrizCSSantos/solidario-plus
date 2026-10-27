@@ -1,60 +1,71 @@
-<!doctype html>
-<html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Distribuições | Solidário+</title>
-  </head>
-  <body>
-    <header>
-      <h1>Solidário+</h1>
-      <nav>
-        <a href="/">Início</a>
-        <a href="{{ url_for('products.listar') }}">Produtos</a>
-        <a href="{{ url_for('stock.listar') }}">Estoque</a>
-        <a href="{{ url_for('distributions.listar') }}">Distribuições</a>
-      </nav>
-    </header>
+{% extends "base.html" %} {% block title %}Distribuições | Solidário+{% endblock
+%} {% block content %}
+<section class="page-heading">
+  <div>
+    <p class="eyebrow">ENTREGA ÀS FAMÍLIAS</p>
+    <h1>Distribuições</h1>
+    <p class="page-description">
+      Consulte o histórico dos produtos distribuídos às famílias atendidas.
+    </p>
+  </div>
 
-    <main>
+  <a class="button button-primary" href="{{ url_for('distributions.nova') }}">
+    <span aria-hidden="true">+</span> Registrar distribuição
+  </a>
+</section>
+
+<section class="content-card">
+  <div class="section-heading">
+    <div>
       <h2>Histórico de distribuições</h2>
-      <p>
-        <a href="{{ url_for('distributions.nova') }}">
-          Registrar distribuição
-        </a>
-      </p>
+      <p>Consulte as datas, os produtos e as quantidades entregues.</p>
+    </div>
 
-      {% if movimentacoes %}
-      <table>
-        <thead>
-          <tr>
-            <th>Data</th>
-            <th>Família</th>
-            <th>Produto</th>
-            <th>Quantidade</th>
-            <th>Observação</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for movimentacao in movimentacoes %}
-          <tr>
-            <td>{{ movimentacao.data_movimentacao.strftime('%d/%m/%Y') }}</td>
-            <td>
-              {{ movimentacao.familia.codigo if movimentacao.familia else "—" }}
-            </td>
-            <td>{{ movimentacao.produto.nome }}</td>
-            <td>
-              {{ movimentacao.quantidade }} {{
-              movimentacao.produto.unidade_medida }}
-            </td>
-            <td>{{ movimentacao.observacao or "—" }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-      {% else %}
-      <p>Nenhuma distribuição registrada ainda.</p>
-      {% endif %}
-    </main>
-  </body>
-</html>
+    <span class="item-count"> {{ movimentacoes|length }} registro(s) </span>
+  </div>
+
+  {% if movimentacoes %}
+  <div class="table-wrapper">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>Família</th>
+          <th>Produto</th>
+          <th>Quantidade</th>
+          <th>Observação</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for movimentacao in movimentacoes %}
+        <tr>
+          <td>{{ movimentacao.data_movimentacao.strftime('%d/%m/%Y') }}</td>
+          <td>
+            {{ movimentacao.familia.codigo if movimentacao.familia else "—" }}
+          </td>
+          <td class="product-name">{{ movimentacao.produto.nome }}</td>
+          <td>
+            {{ movimentacao.quantidade }} {{ movimentacao.produto.unidade_medida
+            }}
+          </td>
+          <td>{{ movimentacao.observacao or "—" }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-state-icon" aria-hidden="true">📦</div>
+    <h3>Nenhuma distribuição registrada</h3>
+    <p>
+      Quando os produtos forem entregues às famílias, os registros aparecerão
+      neste histórico.
+    </p>
+    <a class="button button-primary" href="{{ url_for('distributions.nova') }}">
+      Registrar primeira distribuição
+    </a>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

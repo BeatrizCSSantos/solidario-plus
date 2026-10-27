@@ -1,66 +1,85 @@
+{% extends "base.html" %} {% block title %}Famílias | Solidário+{% endblock %}
+{% block content %}
+<section class="page-heading">
+  <div>
+    <p class="eyebrow">PESSOAS ATENDIDAS</p>
+    <h1>Famílias</h1>
+    <p class="page-description">
+      Gerencie o cadastro e acompanhe a situação das famílias atendidas pela
+      associação.
+    </p>
+  </div>
 
-<!doctype html>
-<html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Famílias | Solidário+</title>
-  </head>
-  <body>
-    <header>
-      <h1>Solidário+</h1>
-      <nav>
-        <a href="/">Início</a>
-        <a href="{{ url_for('families.listar') }}">Famílias</a>
-        <a href="{{ url_for('distributions.listar') }}">Distribuições</a>
-      </nav>
-    </header>
+  <a class="button button-primary" href="{{ url_for('families.nova') }}">
+    <span aria-hidden="true">+</span> Cadastrar família
+  </a>
+</section>
 
-    <main>
-      <h2>Famílias atendidas</h2>
-      <p>
-        <a href="{{ url_for('families.nova') }}">Cadastrar família</a>
-      </p>
+{% with mensagens = get_flashed_messages(with_categories=true) %} {% for
+categoria, mensagem in mensagens %}
+<div class="alert alert-{{ categoria }}" role="alert">{{ mensagem }}</div>
+{% endfor %} {% endwith %}
 
-      {% with mensagens = get_flashed_messages(with_categories=true) %}
-        {% for categoria, mensagem in mensagens %}
-          <p role="alert">{{ mensagem }}</p>
+<section class="content-card">
+  <div class="section-heading">
+    <div>
+      <h2>Famílias cadastradas</h2>
+      <p>Consulte os códigos e a situação dos cadastros.</p>
+    </div>
+
+    <span class="item-count"> {{ familias|length }} família(s) </span>
+  </div>
+
+  {% if familias %}
+  <div class="table-wrapper">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Código da família</th>
+          <th>Situação</th>
+          <th class="actions-column">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for familia in familias %}
+        <tr>
+          <td class="product-name">{{ familia.codigo }}</td>
+          <td>
+            {% if familia.ativo %}
+            <span class="status-badge status-active">Ativa</span>
+            {% else %}
+            <span class="status-badge status-inactive">Inativa</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if familia.ativo %}
+            <form
+              method="post"
+              action="{{ url_for('families.inativar', familia_id=familia.id) }}"
+              class="inline-form"
+            >
+              <button class="button button-danger-outline" type="submit">
+                Inativar
+              </button>
+            </form>
+            {% else %}
+            <span class="muted-text">Sem ações disponíveis</span>
+            {% endif %}
+          </td>
+        </tr>
         {% endfor %}
-      {% endwith %}
-
-      {% if familias %}
-      <table>
-        <thead>
-          <tr>
-            <th>Código</th>
-            <th>Situação</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for familia in familias %}
-          <tr>
-            <td>{{ familia.codigo }}</td>
-            <td>{{ "Ativa" if familia.ativo else "Inativa" }}</td>
-            <td>
-              {% if familia.ativo %}
-              <form
-                method="post"
-                action="{{ url_for('families.inativar', familia_id=familia.id) }}"
-              >
-                <button type="submit">Inativar</button>
-              </form>
-              {% else %}
-              <span>Família inativa</span>
-              {% endif %}
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-      {% else %}
-      <p>Nenhuma família cadastrada ainda.</p>
-      {% endif %}
-    </main>
-  </body>
-</html>
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-state-icon" aria-hidden="true">👥</div>
+    <h3>Nenhuma família cadastrada</h3>
+    <p>Cadastre a primeira família para começar a organizar os atendimentos.</p>
+    <a class="button button-primary" href="{{ url_for('families.nova') }}">
+      Cadastrar primeira família
+    </a>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

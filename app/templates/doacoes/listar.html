@@ -1,49 +1,70 @@
+{% extends "base.html" %} {% block title %}Doações | Solidário+{% endblock %} {%
+block content %}
+<section class="page-heading">
+  <div>
+    <p class="eyebrow">ENTRADAS DE ESTOQUE</p>
+    <h1>Doações</h1>
+    <p class="page-description">
+      Consulte as doações recebidas e acompanhe os produtos que entraram no
+      estoque.
+    </p>
+  </div>
 
-<!doctype html>
-<html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Doações | Solidário+</title>
-  </head>
-  <body>
-    <header>
-      <h1>Solidário+</h1>
-      <nav>
-        <a href="/">Início</a>
-        <a href="{{ url_for('products.listar') }}">Produtos</a>
-        <a href="{{ url_for('donations.listar') }}">Doações</a>
-      </nav>
-    </header>
+  <a class="button button-primary" href="{{ url_for('donations.nova') }}">
+    <span aria-hidden="true">+</span> Registrar doação
+  </a>
+</section>
 
-    <main>
+{% with mensagens = get_flashed_messages(with_categories=true) %} {% for
+categoria, mensagem in mensagens %}
+<div class="alert alert-{{ categoria }}" role="alert">{{ mensagem }}</div>
+{% endfor %} {% endwith %}
+
+<section class="content-card">
+  <div class="section-heading">
+    <div>
       <h2>Doações registradas</h2>
-      <p><a href="{{ url_for('donations.nova') }}">Registrar doação</a></p>
+      <p>Histórico de produtos recebidos pela associação.</p>
+    </div>
 
-      {% if doacoes %}
-      <table>
-        <thead>
-          <tr>
-            <th>Data</th>
-            <th>Produto</th>
-            <th>Quantidade</th>
-            <th>Observação</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for doacao in doacoes %}
-          <tr>
-            <td>{{ doacao.data_doacao.strftime('%d/%m/%Y') }}</td>
-            <td>{{ doacao.produto.nome }}</td>
-            <td>{{ doacao.quantidade }} {{ doacao.produto.unidade_medida }}</td>
-            <td>{{ doacao.observacao or "—" }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-      {% else %}
-      <p>Nenhuma doação registrada ainda.</p>
-      {% endif %}
-    </main>
-  </body>
-</html>
+    <span class="item-count"> {{ doacoes|length }} doação(ões) </span>
+  </div>
+
+  {% if doacoes %}
+  <div class="table-wrapper">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>Produto</th>
+          <th>Quantidade</th>
+          <th>Observação</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for doacao in doacoes %}
+        <tr>
+          <td>{{ doacao.data_doacao.strftime('%d/%m/%Y') }}</td>
+          <td class="product-name">{{ doacao.produto.nome }}</td>
+          <td>{{ doacao.quantidade }} {{ doacao.produto.unidade_medida }}</td>
+          <td>{{ doacao.observacao or "—" }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-state-icon" aria-hidden="true">📦</div>
+    <h3>Nenhuma doação registrada</h3>
+    <p>
+      Quando a associação receber produtos, você poderá registrar as doações e
+      consultar o histórico nesta página.
+    </p>
+    <a class="button button-primary" href="{{ url_for('donations.nova') }}">
+      Registrar primeira doação
+    </a>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

@@ -1,50 +1,64 @@
-<!doctype html>
-<html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Novo produto | Solidário+</title>
-  </head>
-  <body>
-    <header>
-      <h1>Solidário+</h1>
-      <nav>
-        <a href="/">Início</a>
-        <a href="{{ url_for('products.listar') }}">Produtos</a>
-      </nav>
-    </header>
+{% extends "base.html" %} {% block title %}Novo produto | Solidário+{% endblock
+%} {% block content %}
+<section class="page-heading">
+  <div>
+    <p class="eyebrow">CADASTRO E ORGANIZAÇÃO</p>
+    <h1>Cadastrar produto</h1>
+    <p class="page-description">
+      Informe os dados do produto para adicioná-lo ao sistema.
+    </p>
+  </div>
+</section>
 
-    <main>
-      <h2>Cadastrar produto</h2>
+{% with mensagens = get_flashed_messages(with_categories=true) %} {% for
+categoria, mensagem in mensagens %}
+<div class="alert alert-{{ categoria }}" role="alert">{{ mensagem }}</div>
+{% endfor %} {% endwith %}
 
-      {% with mensagens = get_flashed_messages(with_categories=true) %} {% for
-      categoria, mensagem in mensagens %}
-      <p role="alert">{{ mensagem }}</p>
-      {% endfor %} {% endwith %}
+<section class="form-card">
+  <form method="post" class="form-layout">
+    <div class="form-field">
+      <label for="nome">Nome do produto</label>
+      <input
+        type="text"
+        id="nome"
+        name="nome"
+        maxlength="100"
+        placeholder="Ex.: Arroz, feijão ou leite"
+        autocomplete="off"
+        required
+      />
+      <p class="field-hint">Use um nome fácil de identificar na listagem.</p>
+    </div>
 
-      <form method="post">
-        <div>
-          <label for="nome">Nome do produto</label>
-          <input type="text" id="nome" name="nome" maxlength="100" required />
-        </div>
+    <div class="form-field">
+      <label for="unidade_medida">Unidade de medida</label>
+      <select id="unidade_medida" name="unidade_medida" required>
+        <option value="">Selecione uma unidade</option>
+        <option value="kg">Quilograma (kg)</option>
+        <option value="g">Grama (g)</option>
+        <option value="litro">Litro</option>
+        <option value="ml">Mililitro (ml)</option>
+        <option value="unidade">Unidade</option>
+        <option value="pacote">Pacote</option>
+        <option value="caixa">Caixa</option>
+      </select>
+      <p class="field-hint">
+        A unidade será utilizada para registrar as quantidades do produto.
+      </p>
+    </div>
 
-        <div>
-          <label for="unidade_medida">Unidade de medida</label>
-          <select id="unidade_medida" name="unidade_medida" required>
-            <option value="">Selecione uma unidade</option>
-            <option value="kg">Quilograma (kg)</option>
-            <option value="g">Grama (g)</option>
-            <option value="litro">Litro</option>
-            <option value="ml">Mililitro (ml)</option>
-            <option value="unidade">Unidade</option>
-            <option value="pacote">Pacote</option>
-            <option value="caixa">Caixa</option>
-          </select>
-        </div>
-
-        <button type="submit">Salvar produto</button>
-        <a href="{{ url_for('products.listar') }}">Cancelar</a>
-      </form>
-    </main>
-  </body>
-</html>
+    <div class="form-actions">
+      <button class="button button-primary" type="submit">
+        Salvar produto
+      </button>
+      <a
+        class="button button-secondary"
+        href="{{ url_for('products.listar') }}"
+      >
+        Cancelar
+      </a>
+    </div>
+  </form>
+</section>
+{% endblock %}
