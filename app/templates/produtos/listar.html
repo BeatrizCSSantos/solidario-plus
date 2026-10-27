@@ -16,6 +16,12 @@
 
     <main>
       <h2>Produtos cadastrados</h2>
+
+      {% with mensagens = get_flashed_messages(with_categories=true) %} {% for
+      categoria, mensagem in mensagens %}
+      <p role="alert" class="{{ categoria }}">{{ mensagem }}</p>
+      {% endfor %} {% endwith %}
+
       <p>
         <a href="{{ url_for('products.novo') }}">Cadastrar produto</a>
       </p>
