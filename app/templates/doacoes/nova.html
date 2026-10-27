@@ -1,0 +1,67 @@
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nova doação | Solidário+</title>
+  </head>
+  <body>
+    <header>
+      <h1>Solidário+</h1>
+      <nav>
+        <a href="/">Início</a>
+        <a href="{{ url_for('products.listar') }}">Produtos</a>
+        <a href="{{ url_for('donations.listar') }}">Doações</a>
+      </nav>
+    </header>
+
+    <main>
+      <h2>Registrar doação</h2>
+
+      {% with mensagens = get_flashed_messages(with_categories=true) %}
+        {% for categoria, mensagem in mensagens %}
+          <p role="alert">{{ mensagem }}</p>
+        {% endfor %}
+      {% endwith %}
+
+      {% if produtos %}
+      <form method="post">
+        <label for="produto_id">Produto</label>
+        <select id="produto_id" name="produto_id" required>
+          <option value="">Selecione um produto</option>
+          {% for produto in produtos %}
+          <option value="{{ produto.id }}">{{ produto.nome }} ({{ produto.unidade_medida }})</option>
+          {% endfor %}
+        </select>
+
+        <label for="quantidade">Quantidade</label>
+        <input
+          id="quantidade"
+          name="quantidade"
+          type="number"
+          min="0.01"
+          step="0.01"
+          required
+        />
+
+        <label for="data_doacao">Data da doação</label>
+        <input
+          id="data_doacao"
+          name="data_doacao"
+          type="date"
+          value="{{ request.form.get('data_doacao', '') }}"
+          required
+        />
+
+        <label for="observacao">Observação (opcional)</label>
+        <textarea id="observacao" name="observacao" maxlength="250"></textarea>
+
+        <button type="submit">Registrar doação</button>
+      </form>
+      {% else %}
+      <p>Cadastre pelo menos um produto ativo antes de registrar uma doação.</p>
+      {% endif %}
+    </main>
+  </body>
+</html>
