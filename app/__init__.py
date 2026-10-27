@@ -1,8 +1,8 @@
+
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
-
 
 def create_app():
     app = Flask(__name__)
@@ -10,7 +10,19 @@ def create_app():
 
     db.init_app(app)
 
+    with app.app_context():
+        from app.models import (
+            Produto,
+            Doacao,
+            FamiliaAtendida,
+            MovimentacaoEstoque,
+        )
+        db.create_all()
+
     from app.routes import main
+    from app.product_routes import products
+
     app.register_blueprint(main)
+    app.register_blueprint(products)
 
     return app
