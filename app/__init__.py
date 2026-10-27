@@ -22,9 +22,11 @@ def create_app():
     from app.routes import main
     from app.product_routes import products
     from app.donation_routes import donations
+    from app.stock_routes import stock
 
     app.register_blueprint(main)
     app.register_blueprint(products)
     app.register_blueprint(donations)
+    app.register_blueprint(stock)
 
     return app

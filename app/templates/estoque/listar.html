@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Estoque | Solidário+</title>
+  </head>
+  <body>
+    <header>
+      <h1>Solidário+</h1>
+      <nav>
+        <a href="/">Início</a>
+        <a href="{{ url_for('products.listar') }}">Produtos</a>
+        <a href="{{ url_for('donations.listar') }}">Doações</a>
+        <a href="{{ url_for('stock.listar') }}">Estoque</a>
+      </nav>
+    </header>
+
+    <main>
+      <h2>Consulta de estoque</h2>
+
+      {% if produtos %}
+      <table>
+        <thead>
+          <tr>
+            <th>Produto</th>
+            <th>Unidade</th>
+            <th>Entradas</th>
+            <th>Saídas</th>
+            <th>Saldo disponível</th>
+            <th>Situação</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for produto, entradas, saidas, saldo in produtos %}
+          <tr>
+            <td>{{ produto.nome }}</td>
+            <td>{{ produto.unidade_medida }}</td>
+            <td>{{ entradas }}</td>
+            <td>{{ saidas }}</td>
+            <td>{{ saldo }}</td>
+            <td>{{ "Ativo" if produto.ativo else "Inativo" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p>Nenhum produto cadastrado.</p>
+      {% endif %}
+    </main>
+  </body>
+</html>
