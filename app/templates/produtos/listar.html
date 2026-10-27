@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Produtos | Solidário+</title>
+  </head>
+  <body>
+    <header>
+      <h1>Solidário+</h1>
+      <nav>
+        <a href="/">Início</a>
+        <a href="/produtos/">Produtos</a>
+      </nav>
+    </header>
+
+    <main>
+      <h2>Produtos cadastrados</h2>
+      <p>
+        <a href="{{ url_for('products.novo') }}">Cadastrar produto</a>
+      </p>
+      {% if produtos %}
+      <table>
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Unidade de medida</th>
+            <th>Situação</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for produto in produtos %}
+          <tr>
+            <td>{{ produto.nome }}</td>
+            <td>{{ produto.unidade_medida }}</td>
+            <td>{{ "Ativo" if produto.ativo else "Inativo" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p>Nenhum produto cadastrado ainda.</p>
+      {% endif %}
+    </main>
+  </body>
+</html>

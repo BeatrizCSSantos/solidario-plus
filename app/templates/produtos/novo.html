@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Novo produto | Solidário+</title>
+  </head>
+  <body>
+    <header>
+      <h1>Solidário+</h1>
+      <nav>
+        <a href="/">Início</a>
+        <a href="{{ url_for('products.listar') }}">Produtos</a>
+      </nav>
+    </header>
+
+    <main>
+      <h2>Cadastrar produto</h2>
+
+      {% with mensagens = get_flashed_messages(with_categories=true) %} {% for
+      categoria, mensagem in mensagens %}
+      <p role="alert">{{ mensagem }}</p>
+      {% endfor %} {% endwith %}
+
+      <form method="post">
+        <div>
+          <label for="nome">Nome do produto</label>
+          <input type="text" id="nome" name="nome" maxlength="100" required />
+        </div>
+
+        <div>
+          <label for="unidade_medida">Unidade de medida</label>
+          <select id="unidade_medida" name="unidade_medida" required>
+            <option value="">Selecione uma unidade</option>
+            <option value="kg">Quilograma (kg)</option>
+            <option value="g">Grama (g)</option>
+            <option value="litro">Litro</option>
+            <option value="ml">Mililitro (ml)</option>
+            <option value="unidade">Unidade</option>
+            <option value="pacote">Pacote</option>
+            <option value="caixa">Caixa</option>
+          </select>
+        </div>
+
+        <button type="submit">Salvar produto</button>
+        <a href="{{ url_for('products.listar') }}">Cancelar</a>
+      </form>
+    </main>
+  </body>
+</html>
