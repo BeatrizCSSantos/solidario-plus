@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Distribuições | Solidário+</title>
+  </head>
+  <body>
+    <header>
+      <h1>Solidário+</h1>
+      <nav>
+        <a href="/">Início</a>
+        <a href="{{ url_for('products.listar') }}">Produtos</a>
+        <a href="{{ url_for('stock.listar') }}">Estoque</a>
+        <a href="{{ url_for('distributions.listar') }}">Distribuições</a>
+      </nav>
+    </header>
+
+    <main>
+      <h2>Histórico de distribuições</h2>
+      <p>
+        <a href="{{ url_for('distributions.nova') }}">
+          Registrar distribuição
+        </a>
+      </p>
+
+      {% if movimentacoes %}
+      <table>
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Família</th>
+            <th>Produto</th>
+            <th>Quantidade</th>
+            <th>Observação</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for movimentacao in movimentacoes %}
+          <tr>
+            <td>{{ movimentacao.data_movimentacao.strftime('%d/%m/%Y') }}</td>
+            <td>
+              {{ movimentacao.familia.codigo if movimentacao.familia else "—" }}
+            </td>
+            <td>{{ movimentacao.produto.nome }}</td>
+            <td>
+              {{ movimentacao.quantidade }} {{
+              movimentacao.produto.unidade_medida }}
+            </td>
+            <td>{{ movimentacao.observacao or "—" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p>Nenhuma distribuição registrada ainda.</p>
+      {% endif %}
+    </main>
+  </body>
+</html>

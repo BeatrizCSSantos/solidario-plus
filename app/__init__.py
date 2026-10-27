@@ -23,10 +23,14 @@ def create_app():
     from app.product_routes import products
     from app.donation_routes import donations
     from app.stock_routes import stock
+    from app.distribution_routes import distributions
+    from app.family_routes import families
 
     app.register_blueprint(main)
     app.register_blueprint(products)
     app.register_blueprint(donations)
     app.register_blueprint(stock)
+    app.register_blueprint(distributions)
+    app.register_blueprint(families)
 
     return app

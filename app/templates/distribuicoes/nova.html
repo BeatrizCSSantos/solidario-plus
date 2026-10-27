@@ -1,0 +1,85 @@
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nova distribuição | Solidário+</title>
+  </head>
+  <body>
+    <header>
+      <h1>Solidário+</h1>
+      <nav>
+        <a href="/">Início</a>
+        <a href="{{ url_for('products.listar') }}">Produtos</a>
+        <a href="{{ url_for('stock.listar') }}">Estoque</a>
+        <a href="{{ url_for('distributions.listar') }}">Distribuições</a>
+      </nav>
+    </header>
+
+    <main>
+      <h2>Registrar distribuição</h2>
+
+      {% with mensagens = get_flashed_messages(with_categories=true) %}
+        {% for categoria, mensagem in mensagens %}
+          <p role="alert">{{ mensagem }}</p>
+        {% endfor %}
+      {% endwith %}
+
+      {% if produtos and familias %}
+      <form method="post">
+        <label for="familia_id">Família atendida</label>
+        <select id="familia_id" name="familia_id" required>
+          <option value="">Selecione uma família</option>
+          {% for familia in familias %}
+          <option value="{{ familia.id }}">{{ familia.codigo }}</option>
+          {% endfor %}
+        </select>
+
+        <label for="produto_id">Produto</label>
+        <select id="produto_id" name="produto_id" required>
+          <option value="">Selecione um produto</option>
+          {% for produto in produtos %}
+          <option value="{{ produto.id }}">
+            {{ produto.nome }} ({{ produto.unidade_medida }})
+          </option>
+          {% endfor %}
+        </select>
+
+        <label for="quantidade">Quantidade</label>
+        <input
+          id="quantidade"
+          name="quantidade"
+          type="number"
+          min="0.01"
+          step="0.01"
+          required
+        />
+
+        <label for="data_movimentacao">Data da distribuição</label>
+        <input
+          id="data_movimentacao"
+          name="data_movimentacao"
+          type="date"
+          value="{{ request.form.get('data_movimentacao', '') }}"
+          required
+        />
+
+        <label for="observacao">Observação (opcional)</label>
+        <textarea
+          id="observacao"
+          name="observacao"
+          maxlength="250"
+        ></textarea>
+
+        <button type="submit">Registrar distribuição</button>
+      </form>
+      {% else %}
+      <p>
+        Para registrar uma distribuição, é necessário ter pelo menos
+        um produto ativo e uma família ativa cadastrada.
+      </p>
+      {% endif %}
+    </main>
+  </body>
+</html>
